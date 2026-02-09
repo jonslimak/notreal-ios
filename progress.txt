@@ -22,4 +22,28 @@
   - Profile: accessed via icon on Home (no tab bar), guest state default, Sign in with Apple, delete account.
   - No bottom tab bar — simplified nav with profile icon in top-right of Home.
 - Mockup HTML includes embedded design notes per screen and a docs drawer showing plan/progress/tasks.
+- Created stakeholder demo at `stakeholder/index.html` and deployed via GitHub Pages.
+- Repo is public at https://github.com/jonslimak/notreal-ios with Pages enabled from `main` branch root.
 - Next step: begin Stage 1 implementation. The implementing agent should read `mockups/v1-screens.html` for UI reference.
+
+## UI Artifacts (Important — Two Separate Things)
+
+### 1. Reference Mockups: `mockups/v1-screens.html`
+- The source of truth for implementation. Agents building the app should read this file.
+- Contains all four screens (Player, Home, Paywall, Profile) with full HTML/CSS structure.
+- Includes a docs drawer with embedded snapshots of plan/progress/tasks (static, not live).
+- This is a local development tool. It does not need to be deployed or shared externally.
+- When the UI design changes, update this file. The implementing agent reads it directly from disk.
+
+### 2. Stakeholder Demo: `stakeholder/index.html`
+- A shareable page for team alignment. Not used for implementation.
+- Live at: https://jonslimak.github.io/notreal-ios/stakeholder/
+- Shows the same mockup screens side-by-side with a docs panel.
+- The docs panel fetches `plan.md`, `progress.txt`, and `task.md` live from the repo on every page load.
+- Stakeholders always see the latest docs after a push to `main`.
+- The mockup screens in this file are a copy of the reference mockups, not linked. If the reference mockups change, the stakeholder page must be updated separately.
+
+### How to Update Each
+- **To update what agents use for implementation:** edit `mockups/v1-screens.html`.
+- **To update what stakeholders see:** edit `stakeholder/index.html` (mockup changes) or push updated `plan.md`/`progress.txt`/`task.md` to `main` (doc changes auto-reflect).
+- **To update both:** make changes in both files, then `git push origin main`.
