@@ -1,0 +1,25 @@
+# Progress Log
+
+## 2026-02-09
+- Initialized shared-memory workflow for this project.
+- Added task tracking file and project index entry.
+- Next step: run $start to set priorities, risks, and next actions.
+- Completed planning pass and documented MVP scope/architecture in `plan.md`.
+- Locked sprint-based plan, launch risk gate, and core funnel analytics events.
+- Next step: run one final planning review before implementation docs.
+- Final planning review completed and approved updates were applied to `plan.md`.
+- Added compliance must-haves, security baseline, analytics operating model, expanded IAP test matrix, and acceptance criteria.
+- Expanded `plan.md` with project context at the top and a combined implementation architecture + build order section.
+- Created `analytics-spec.md` and `launch-checklist.md`, and referenced both from the implementation section in `plan.md`.
+- Ran a cross-doc consistency pass and applied fixes for sprint-only wording, analytics property definitions, and checklist alignment.
+- Created UI mockups at `mockups/v1-screens.html`. Four screens: Player, Home, Paywall, Profile.
+- Key UX decisions made during mockup process:
+  - App opens directly into the Player (episode 1) — no onboarding screen.
+  - Only 1-2 shows at launch, so no search/discovery/library tabs.
+  - Home screen: one big hero banner for the flagship show + Coming Soon tiles + floating "Jump back in" toast for returning users.
+  - Player: full-screen 9:16 vertical video, swipe up to advance, close button exits to Home.
+  - Paywall: triggered at episode gate (ep 6+), yearly plan pre-selected, App Store compliant copy.
+  - Profile: accessed via icon on Home (no tab bar), guest state default, Sign in with Apple, delete account.
+  - No bottom tab bar — simplified nav with profile icon in top-right of Home.
+- Mockup HTML includes embedded design notes per screen and a docs drawer showing plan/progress/tasks.
+- Next step: begin Stage 1 implementation. The implementing agent should read `mockups/v1-screens.html` for UI reference.
