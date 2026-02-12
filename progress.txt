@@ -47,3 +47,43 @@
 - **To update what agents use for implementation:** edit `mockups/v1-screens.html`.
 - **To update what stakeholders see:** edit `stakeholder/index.html` (mockup changes) or push updated `plan.md`/`progress.txt`/`task.md` to `main` (doc changes auto-reflect).
 - **To update both:** make changes in both files, then `git push origin main`.
+- Session closeout completed with `$comp`.
+- Planning docs are aligned and implementation-ready: `plan.md`, `analytics-spec.md`, `launch-checklist.md`.
+- UI source-of-truth confirmed for implementation: `mockups/v1-screens.html`.
+- Next step: begin Stage 1 implementation from `plan.md` build order.
+- Finalized `prd.json` as MVP source of truth with strict cutline, deferred scope list, and DevOps Stage 0 setup requirements.
+- Updated `plan.md` to add Stage 0 (DevOps + Service Onboarding), Sprint 0 mapping, two-environment strategy (`dev`/`prod`), and expanded acceptance criteria.
+- Rebuilt `task.md` into a full execution board with S0-S7 tasks, milestone test gates, and evidence tracking.
+- Confirmed MVP scope lock remains: no push notifications in MVP and core conversion analytics only.
+- Next step: start execution with `S0-T1` (Apple/App Store Connect setup) and capture evidence in `task.md`.
+
+## 2026-02-11
+- Ran one final senior-level requirements hardening pass focused on avoiding overbuild while reducing launch risk.
+- Applied minimal updates across planning docs: stretch-capable auth/account scope, media delivery contract, explicit release-candidate App Store policy re-check, and unchanged 7-event MVP analytics contract.
+- Updated files: `plan.md`, `prd.json`, `launch-checklist.md`, `task.md`, `analytics-spec.md`.
+- Completed cross-doc consistency verification and confirmed alignment for scope rules, media contract, policy re-check, and analytics event set.
+- Next step: begin execution at `S0-T1` and attach evidence directly in `task.md`.
+- Started Sprint 0 execution and completed `S0-T1` Apple setup.
+- Created Apple bundle IDs: `com.notreal.iosapp` (prod) and `com.notreal.iosapp.dev` (dev).
+- Created App Store Connect app records: `notreal` (prod) and `notreal Dev` (dev).
+- Confirmed owner model: all account setup tasks are owned by PM (single owner).
+- Paused session before `S0-T2` to install Xcode and restart machine.
+- Next step after restart: run `S0-T2` (Xcode install, automatic signing setup, and signed `dev` build validation).
+- Session closeout via `$comp`: Sprint 0 paused after `S0-T1` completion; resume at `S0-T2` immediately after Xcode install and machine restart.
+- Completed `S0-T2`: configured automatic signing with bundle ID `com.notreal.iosapp.dev` and validated signed `dev` build by launching successfully on iPhone Simulator.
+- Next step: execute `S0-T3` (configure monthly/yearly IAP products and sandbox tester accounts in App Store Connect).
+- Completed `S0-T3`: created subscription group `notreal Premium`, added `com.notreal.iosapp.dev.monthly` and `com.notreal.iosapp.dev.yearly` with pricing, and created 2 sandbox tester accounts.
+- Noted App Store Connect status `Missing Metadata` for subscriptions (expected before full submission metadata/review setup).
+- Next step: execute `S0-T4` (create Firebase `dev`/`prod` projects and register iOS app in both).
+- Completed `S0-T4`: created Firebase projects `notreal-dev` and `notreal-prod` (Analytics enabled), registered iOS apps `com.notreal.iosapp.dev` and `com.notreal.iosapp`, and downloaded both Firebase config files.
+- Stored config files with clear names (`GoogleService-Info.plist` for dev and `GoogleService-Info-prod.plist` for prod) to avoid mix-ups during setup.
+- Next step: execute `S0-T5` (enable Firestore, Remote Config, Analytics baseline, and set IAM roles).
+- Completed `S0-T5`: enabled Firestore in both projects using `(default)` database ID and `us-central1`, with production mode.
+- Published Remote Config baseline in both projects: `freeEpisodeCount=5`, `showTrial=false`, `defaultPlanOrder=yearly_then_monthly`.
+- Applied baseline restrictive Firestore rules and completed IAM least-privilege check.
+- Next step: execute `S0-T6` (configure RevenueCat project/app, products, offerings, and entitlement mapping).
+- Started `S0-T6`: created RevenueCat project `notreal`, added app configs for `notreal-dev` (`com.notreal.iosapp.dev`) and `notreal-prod` (`com.notreal.iosapp`), created entitlement `premium`, and added dev/prod monthly+yearly products.
+- Encountered blocker during `S0-T6`: RevenueCat product status shows `Could not check` with App Store Connect connection warning.
+- Session pause point: verify/configure App Store Connect API credentials in RevenueCat for both apps (separate from in-app purchase key), then recheck product status.
+- First action next session: complete RevenueCat App Store Connect API credential setup (`Issuer ID`, `Key ID`, `.p8`, `Vendor Number`), wait for sync, then finish offering/package mapping (`dev_default`, `prod_default`).
+- Session closeout via `$comp`: paused during `S0-T6` pending credential verification and offering completion.
