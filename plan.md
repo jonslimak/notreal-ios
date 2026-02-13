@@ -77,24 +77,28 @@ Reference docs used by this section:
 - Create RevenueCat project/app setup, entitlement mapping, offering setup, and API key handling.
 - Enable Firebase -> BigQuery export and validate core MVP events are queryable.
 - Establish secrets and access control baseline with least-privilege roles.
+- Execution policy: Stage 0 remains a release gate, but is a soft gate for app build progress; Stages 1-3 can proceed in parallel while Stage 0 external setup is finalized.
 - Exit criteria: signed `dev` build succeeds, Firebase config reads in `dev`, RevenueCat purchase/restore mapping is validated, BigQuery receives required MVP events, and no secrets are stored in repo.
 2. Stage 1: Foundation
-- Set up project, Firebase environments, dependency wiring, core models.
+- Set up project, dependency wiring, and core models in `dev` first.
+- Build service adapters that allow fixture/mock mode before final live integration.
 - Exit criteria: app boots, Firebase read works, remote config fetch works.
 3. Stage 2: Core Viewing Experience
-- Build feed UI, video player, autoplay, and episode transitions.
+- Build feed UI, video player, autoplay, and episode transitions for one validated `dev` end-to-end flow first.
 - Exit criteria: smooth playback flow for unlocked episodes.
 4. Stage 3: Locking + Paywall
 - Implement first-5-free behavior and marked-lock interception.
-- Build paywall UI with legal links and restore access.
+- Build paywall UI with legal links and restore access using mock entitlement state before final billing wiring.
 - Exit criteria: lock behavior and paywall copy are compliant and testable.
 5. Stage 4: Subscription + Account Boundary
 - Integrate RevenueCat purchases and restore.
 - Add Sign in with Apple when entitlement must persist across devices.
 - Scope rule: purchase/restore is must-ship; Sign in with Apple/account deletion can defer if timeline risk threatens core funnel launch.
+- Dependency: start live billing wiring only after Stage 0 `S0-T6` is unblocked and `dev` product status is healthy.
 - Exit criteria: purchase and restore are stable in sandbox/TestFlight; Sign in with Apple boundary and account deletion are complete if included in MVP build.
 6. Stage 5: Analytics (Core Funnel Only)
 - Implement core conversion analytics event contract and dashboard inputs.
+- Dependency: BigQuery validation checks require Stage 0 `S0-T7` completion.
 - Exit criteria: required MVP funnel events validated end-to-end.
 7. Stage 6: Security + Compliance Hardening
 - Finalize rules, App Check enforcement, account deletion flow, review artifacts.
@@ -103,6 +107,12 @@ Reference docs used by this section:
 - Bug fixing, conversion tuning via config, final regression pass, and pre-submit App Store policy/upcoming-requirements re-check.
 - Exit criteria: launch checklist is fully green and release candidate is stable.
 
+### Parallel Lanes (Approved)
+1. App lane (`dev` first): Stage 1 -> Stage 2 -> Stage 3 proceeds while external setup tasks continue in parallel.
+2. Ops lane (external setup): Stage 0 `S0-T6`, `S0-T7`, and `S0-T8` continue in parallel.
+3. Gate policy: Stage 0 is not a hard blocker for Stages 1-3, but Stage 0 gate completion is mandatory before release submission.
+4. Release safety: do not treat Stage 0 gate failures as acceptable for TestFlight/release readiness.
+
 ### MVP Defer List (If Schedule Slips)
 1. Push notifications and push-open routing (deferred to post-MVP).
 2. Extended analytics events outside conversion core (`episode_impression`, `episode_complete`, `push_open`).
@@ -110,13 +120,13 @@ Reference docs used by this section:
 4. Deep BigQuery slicing and A/B experimentation hooks.
 
 ### Sprint Mapping
-1. Sprint 0: Stage 0.
-2. Sprint 1: Stage 1 + start Stage 2.
-3. Sprint 2: finish Stage 2 + start Stage 3.
-4. Sprint 3: finish Stage 3 + Stage 4.
-5. Sprint 4: Stage 5.
+1. Sprint 0: Stage 0 started (Ops lane).
+2. Sprint 1: Stage 1 + start Stage 2 in parallel with remaining Stage 0 tasks.
+3. Sprint 2: finish Stage 2 + start Stage 3 in parallel with remaining Stage 0 tasks.
+4. Sprint 3: finish Stage 3 + Stage 4 only after Stage 0 `S0-T6` is unblocked.
+5. Sprint 4: Stage 5 (BigQuery checks after `S0-T7` completion).
 6. Sprint 5: Stage 6.
-7. Sprint 6: Stage 7 and submission readiness.
+7. Sprint 6: Stage 7 and submission readiness (requires Stage 0 gate complete).
 8. Sprint 7 (buffer): final fixes only for critical launch blockers.
 
 ## Security Baseline (Required)
@@ -138,6 +148,13 @@ Reference docs used by this section:
 3. `PaywallConfig`: `freeEpisodeCount`, `showTrial`, `defaultPlanOrder`, `gateMode`.
 4. `EntitlementState`: `userId`, `isSubscribed`, `source`, `expiresAt`, `updatedAt`.
 5. `AnalyticsEvent`: `name`, `userId`, `seriesId`, `episodeId`, `isSubscribed`, `timestamp`.
+
+## Planned Service Abstractions (Dev-First)
+1. `ContentRepository` with fixture + Firebase implementations (`*planning needed`).
+2. `EntitlementService` with mock + RevenueCat implementations (`*planning needed`).
+3. `ConfigProvider` with static defaults + Remote Config implementations (`*planning needed`).
+4. `AnalyticsSink` with console/debug + Firebase implementations (`*planning needed`).
+5. Rule: complete focused planning for each `*planning needed` item before implementation.
 
 ## Launch Risk Gate (Required)
 1. Subscription/paywall copy and pricing clarity meets App Store rules.

@@ -92,3 +92,10 @@
 - Added automation support for stakeholder demo publishing via the new `$stake` skill.
 - `$stake` now handles the live docs refresh flow (commit/push of `progress.txt`, `plan.md`, `task.md` plus live URL verification).
 - Next time, trigger `$stake` to publish the latest stakeholder docs update.
+- Continued `S0-T6` troubleshooting for RevenueCat/App Store product linking.
+- Completed App Store agreement follow-up actions; Apple indicated verification can take up to 24 hours.
+- Confirmed prod subscriptions were missing initially; created/imported products for both `notreal-dev` and `notreal-prod` in RevenueCat.
+- Current state: products appear linked, but both App Store Connect and RevenueCat show `Missing Metadata` status.
+- Session pause requested with remaining Stage 0 DevOps work on hold.
+- Resume point: complete required App Store subscription metadata for dev/prod products (including localization and review metadata), allow Apple verification/sync window to settle, then finish RevenueCat offerings/package mapping and run sandbox purchase/restore validation.
+- Process feedback captured for closeout: prefer lower-complexity, end-to-end proof-of-concept-first setup with progressive expansion rather than full upfront multi-environment configuration.
