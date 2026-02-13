@@ -87,3 +87,8 @@
 - Session pause point: verify/configure App Store Connect API credentials in RevenueCat for both apps (separate from in-app purchase key), then recheck product status.
 - First action next session: complete RevenueCat App Store Connect API credential setup (`Issuer ID`, `Key ID`, `.p8`, `Vendor Number`), wait for sync, then finish offering/package mapping (`dev_default`, `prod_default`).
 - Session closeout via `$comp`: paused during `S0-T6` pending credential verification and offering completion.
+
+## 2026-02-13
+- Added automation support for stakeholder demo publishing via the new `$stake` skill.
+- `$stake` now handles the live docs refresh flow (commit/push of `progress.txt`, `plan.md`, `task.md` plus live URL verification).
+- Next time, trigger `$stake` to publish the latest stakeholder docs update.
