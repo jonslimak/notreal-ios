@@ -99,3 +99,9 @@
 - Session pause requested with remaining Stage 0 DevOps work on hold.
 - Resume point: complete required App Store subscription metadata for dev/prod products (including localization and review metadata), allow Apple verification/sync window to settle, then finish RevenueCat offerings/package mapping and run sandbox purchase/restore validation.
 - Process feedback captured for closeout: prefer lower-complexity, end-to-end proof-of-concept-first setup with progressive expansion rather than full upfront multi-environment configuration.
+- Approved planning pivot based on PM feedback: use parallel execution with a vertical-slice-first approach; Stage 0 remains a hard release gate.
+- Updated `plan.md` and `task.md` to support parallel lanes: App lane (Stages 1-3) and Ops lane (`S0-T6`/`S0-T7`/`S0-T8`).
+- Added explicit dependency rules: do not start live billing (`S4-T1`) until `S0-T6` is unblocked; BigQuery validation (`S5-Q2`) depends on `S0-T7`.
+- Added `*planning needed` markers before implementing service abstractions (`ContentRepository`, `EntitlementService`, `ConfigProvider`, `AnalyticsSink`).
+- Published stakeholder docs update with `$stake`; commit `ecd7136` pushed to `main` (GitHub Pages propagation may lag briefly).
+- Next session first actions: complete `S1-T5` mini-spec (`*planning needed`) and continue `S0-T6` metadata completion in parallel.

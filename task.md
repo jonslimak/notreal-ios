@@ -7,7 +7,7 @@
 - Plan baseline: `/Users/jonslimak/Projects/iosapp/plan.md`
 - Current status: Stage 0 onboarding remains in progress (`S0-T6` blocked), but app implementation can proceed in parallel via a `dev`-first path (Stages 1-3) under soft-gate policy.
 - Last updated: 2026-02-13
-- Session closeout: parallel execution approved. Ops lane continues `S0-T6`/`S0-T7`/`S0-T8`; app lane starts Stage 1 in `dev` while Stage 0 remains a required release gate.
+- Session closeout: parallel execution active. Next actions are `S1-T5` mini-spec planning (`*planning needed`) and continued `S0-T6` metadata completion in Ops lane before live billing wiring.
 
 ## Scope Guardrails (Must Hold)
 - MVP is watch -> gate -> subscribe only.
