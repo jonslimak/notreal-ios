@@ -105,3 +105,22 @@
 - Added `*planning needed` markers before implementing service abstractions (`ContentRepository`, `EntitlementService`, `ConfigProvider`, `AnalyticsSink`).
 - Published stakeholder docs update with `$stake`; commit `ecd7136` pushed to `main` (GitHub Pages propagation may lag briefly).
 - Next session first actions: complete `S1-T5` mini-spec (`*planning needed`) and continue `S0-T6` metadata completion in parallel.
+- Completed Stage 1 planning pass and finalized `S1-T5` mini-spec directly in `task.md` (service interfaces, fallback rules, execution order, and S1 test protocol).
+- Updated Stage 1 board state in `task.md`: `S1-T5` is now `done`; `S1-T3` and `S1-T4` now reference approved abstractions instead of planning placeholders.
+- Locked low-rework approach: mock/live integrations remain behind stable interfaces to minimize throwaway code when RevenueCat/App Store setup is fully live.
+- Next actions: start `S1-T1` implementation in App lane and continue `S0-T6` metadata completion in Ops lane.
+- 2026-02-13: Started S1-T1 app shell build. Replaced default SwiftUI template with Player-first shell launch, Player->Home close/back navigation, and environment/config bootstrap scaffold for `APP_ENV` + `FIREBASE_ENABLED` (with bundle-id fallback). Task status now in progress with evidence placeholders to be filled after run checks.
+- 2026-02-13: Completed S1-T1 implementation. Added Firebase package wiring (`FirebaseCore`, `FirebaseFirestore`, `FirebaseRemoteConfig`, `FirebaseAnalytics`), set dev bundle ID to `com.notreal.iosapp.dev`, and added safe Firebase bootstrap behavior (configure when enabled + plist present, otherwise fallback mode).
+- 2026-02-13: Completed S1-Q1 technical check with `xcodebuild` on simulator destination using a clean package clone path (`/tmp/iosapp-sourcepackages`); result `BUILD SUCCEEDED`.
+- 2026-02-13: Completed S1-Q1 boot verification by installing and launching `com.notreal.iosapp.dev` on iOS Simulator via `xcrun simctl`; launch returned a live process id.
+- 2026-02-13: Completed S1-T2 core model layer in `Domain/Models/CoreModels.swift` with `Series`, `Episode`, `PaywallConfig`, and `EntitlementState`.
+- 2026-02-13: Added Stage 1-safe defaults (`freeEpisodeCount=5`, `showTrial=false`, yearly-first plan order), plus strict `Episode` decode validation for required media contract fields to prevent malformed payloads from silently passing.
+- 2026-02-13: Completed S1-T3 service layer with protocol contracts and fallback implementations (`Firebase -> fixture/default`) for content and config.
+- 2026-02-13: Added fixture payloads (`Fixtures/series.json`, `Fixtures/episodes.json`) and app dependency wiring container (`AppContainer`) for Stage 1 startup composition.
+- 2026-02-13: Added automated tests for S1-T2 and S1-T3 using local package harness (`Package.swift`, `Tests/IOSAppCoreTests/*`) and executed `swift test` (8 passed, 0 failed).
+- 2026-02-13: Re-ran iOS simulator build after S1-T3 wiring with `xcodebuild ... -destination 'generic/platform=iOS Simulator' build`; result `BUILD SUCCEEDED`.
+- Next actions: begin `S1-T4` analytics dispatcher scaffold and then run `S1-Q2` Firebase-path plus fallback-path technical validation in app runtime; continue `S0-T6` metadata completion in Ops lane.
+- Session closeout via `$comp`.
+- Stage 1 status: `S1-T1`, `S1-T2`, `S1-T3`, and `S1-Q1` are complete with evidence (`swift test` 8/8 pass; `xcodebuild` simulator build succeeded; app boot launch succeeded).
+- Next session first actions: implement `S1-T4` analytics dispatcher scaffold, run `S1-Q2` Firebase-path plus fallback-path validation, then run `S1-Q3` manual shell stability check.
+- Ops lane status: `S0-T6` remains blocked pending App Store metadata completion and RevenueCat offering/package finalization.

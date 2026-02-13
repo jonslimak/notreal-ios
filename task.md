@@ -5,9 +5,9 @@
 - Repo: /Users/jonslimak/Projects/iosapp
 - Source of truth PRD: `/Users/jonslimak/Projects/iosapp/prd.json`
 - Plan baseline: `/Users/jonslimak/Projects/iosapp/plan.md`
-- Current status: Stage 0 onboarding remains in progress (`S0-T6` blocked), but app implementation can proceed in parallel via a `dev`-first path (Stages 1-3) under soft-gate policy.
+- Current status: Stage 0 onboarding remains in progress (`S0-T6` blocked), and Stage 1 foundation is partially complete in App lane (`S1-T1`, `S1-T2`, `S1-T3`, `S1-Q1` done).
 - Last updated: 2026-02-13
-- Session closeout: parallel execution active. Next actions are `S1-T5` mini-spec planning (`*planning needed`) and continued `S0-T6` metadata completion in Ops lane before live billing wiring.
+- Session closeout: Stage 1 foundation build is in progress with `S1-T1`/`S1-T2`/`S1-T3` and `S1-Q1` complete. Next actions are `S1-T4`, `S1-Q2`, and `S1-Q3` in App lane while continuing `S0-T6` metadata completion in Ops lane.
 
 ## Scope Guardrails (Must Hold)
 - MVP is watch -> gate -> subscribe only.
@@ -50,15 +50,127 @@
 ## Stage 1: Foundation
 | ID | Stage | Type | Task | Status | Evidence |
 |---|---|---|---|---|---|
-| S1-T1 | Stage 1 | build | Set up app shell, dependency wiring, and environment configuration. | not_started | |
-| S1-T2 | Stage 1 | build | Implement core data models (`Series`, `Episode`, `PaywallConfig`, `EntitlementState`). | not_started | |
-| S1-T3 | Stage 1 | build | Implement Firebase read layer for core models and remote config fetch (`*planning needed` for `ContentRepository` + `ConfigProvider` abstraction before implementation). | not_started | |
-| S1-T4 | Stage 1 | build | Add analytics dispatcher scaffold (without full event wiring yet) (`*planning needed` for `AnalyticsSink` abstraction before implementation). | not_started | |
-| S1-T5 | Stage 1 | doc | Define mini-spec for service abstractions: `ContentRepository`, `EntitlementService`, `ConfigProvider`, `AnalyticsSink` (`*planning needed`). | not_started | |
-| S1-Q1 | Stage 1 | test | Technical check: App builds and boots cleanly. | not_started | |
+| S1-T1 | Stage 1 | build | Set up app shell, dependency wiring, and environment configuration. | done | Added Player-first shell root with Player->Home close/back navigation. Wired Firebase SPM dependencies (`FirebaseCore`, `FirebaseFirestore`, `FirebaseRemoteConfig`, `FirebaseAnalytics`) in Xcode project. Added environment resolver scaffold (`APP_ENV`/`FIREBASE_ENABLED` env fallback; bundle-id inference), set target bundle ID to `com.notreal.iosapp.dev`, and added safe Firebase bootstrap fallback when config plist is missing. |
+| S1-T2 | Stage 1 | build | Implement core data models (`Series`, `Episode`, `PaywallConfig`, `EntitlementState`). | done | Added `/iosapp-dev/iosapp-dev/Domain/Models/CoreModels.swift` with `Codable` models, MVP paywall defaults (`freeEpisodeCount=5`, `showTrial=false`, `defaultPlanOrder=yearly_then_monthly`), guest entitlement default helper, and custom `Episode` decoding validation for required media fields. |
+| S1-T3 | Stage 1 | build | Implement Firebase read layer for core models and remote config fetch using approved `ContentRepository` + `ConfigProvider` abstractions. | done | Added service contracts and implementations in `/iosapp-dev/iosapp-dev/Services` including `FirebaseContentRepository`, `FixtureContentRepository`, `FallbackContentRepository`, `FirebaseRemoteConfigFetcher`, `FallbackConfigProvider`, and `DefaultConfigProvider`; wired via `/iosapp-dev/iosapp-dev/App/AppContainer.swift` and app startup. Added fixture payloads in `/iosapp-dev/iosapp-dev/Fixtures`. Verified with `swift test` (8 passing tests covering model validation + service fallback paths) and simulator build (`xcodebuild ... build` succeeded). |
+| S1-T4 | Stage 1 | build | Add analytics dispatcher scaffold (without full event wiring yet) using approved `AnalyticsSink` abstraction. | not_started | |
+| S1-T5 | Stage 1 | doc | Define mini-spec for service abstractions: `ContentRepository`, `EntitlementService`, `ConfigProvider`, `AnalyticsSink`. | done | Approved on 2026-02-13; see "Stage 1 Mini-Spec (S1-T5)". |
+| S1-Q1 | Stage 1 | test | Technical check: App builds and boots cleanly. | done | Build check passed on 2026-02-13 using `xcodebuild -project iosapp-dev.xcodeproj -scheme iosapp-dev -configuration Debug -clonedSourcePackagesDirPath /tmp/iosapp-sourcepackages -destination 'generic/platform=iOS Simulator' build` (`BUILD SUCCEEDED`). Boot check passed via `xcrun simctl install` + `xcrun simctl launch com.notreal.iosapp.dev` (launch returned process id). |
 | S1-Q2 | Stage 1 | test | Technical check: Firebase reads and remote config fetch succeed in `dev`. | not_started | |
 | S1-Q3 | Stage 1 | test | Manual check: App launch and initial navigation shell are stable. | not_started | |
 | S1-G1 | Stage 1 | release | Milestone gate: Stage 1 exit criteria met. | not_started | |
+
+## Stage 1 Mini-Spec (S1-T5)
+
+### 1) Goal and Scope
+- Goal: finish Stage 1 with a stable foundation that supports fast Stage 2-3 implementation and low rework.
+- Stage 1 depth: foundation plus basic Player shell navigation only.
+- Stage 1 excludes: full playback logic, lock/paywall behavior, live RevenueCat purchase flow, full analytics catalog wiring.
+
+### 2) Locked Planning Decisions
+- Environment switching is scheme/build-configuration based only (no in-app environment toggle).
+- Data strategy is Firebase-first with fixture/default fallback for resilience.
+- Mini-spec lives in this file for one-source execution handoff.
+- Architecture target: keep mock/live services behind stable interfaces so Stage 4 integration swaps adapters, not screen logic.
+
+### 3) Ordered Implementation Steps (Stage 1)
+
+#### S1-T1 App shell, dependencies, environment
+- Replace template root with app shell that launches to Player shell first.
+- Add basic Player -> Home close navigation path (shell-level only).
+- Add Firebase SPM dependencies (`FirebaseCore`, `FirebaseFirestore`, `FirebaseRemoteConfig`, `FirebaseAnalytics`).
+- Add environment config values (`APP_ENV`, `FIREBASE_ENABLED`) by build configuration/scheme.
+- Align bundle IDs with Stage 0 setup: `com.notreal.iosapp.dev` for dev and `com.notreal.iosapp` for prod.
+- Startup rule: if Firebase config is unavailable, app does not crash and runs in fixture fallback mode.
+
+#### S1-T2 Core models
+- Implement `Series`, `Episode`, `PaywallConfig`, `EntitlementState`.
+- Episode decoding enforces required fields from PRD media contract.
+- Safe default config values:
+  - `freeEpisodeCount=5`
+  - `showTrial=false`
+  - `defaultPlanOrder=yearly_then_monthly`
+
+#### S1-T3 Content/config service layer
+- Implement protocol-based service layer first, then concrete adapters:
+  - `ContentRepository` (Firebase + fixture implementations)
+  - `ConfigProvider` (Remote Config + defaults implementations)
+  - `EntitlementService` (mock implementation in Stage 1 only)
+- Fallback order:
+  - Attempt Firebase read/fetch.
+  - If read/fetch fails, use local fixtures/default config.
+  - If both fail, show recoverable error UI (no crash).
+
+#### S1-T4 Analytics scaffold
+- Implement `AnalyticsSink` interface and central dispatcher.
+- Provide two sinks:
+  - debug/log sink
+  - Firebase sink adapter
+- Stage 1 event scope: wire `app_open` and one shell-level screen event only.
+- Keep the full 7-event funnel wiring in Stage 5.
+
+### 4) Interface Contracts (Locked)
+```swift
+protocol ContentRepository {
+    func fetchSeries() async throws -> [Series]
+    func fetchEpisodes(seriesId: String) async throws -> [Episode]
+}
+
+protocol ConfigProvider {
+    func fetchPaywallConfig() async -> PaywallConfig
+}
+
+protocol EntitlementService {
+    func currentState() async -> EntitlementState
+    func refreshState() async -> EntitlementState
+}
+
+protocol AnalyticsSink {
+    func track(name: String, properties: [String: Any])
+}
+```
+
+### 5) Stage 1 Test Protocol (Execution Contract)
+
+#### S1-Q1 Technical check: build and boot
+- Action:
+  - Run project build for dev scheme/configuration.
+  - Launch app in simulator.
+- Where to verify:
+  - Build output shows success.
+  - App launches to Player shell without crash.
+- Pass criteria:
+  - Build succeeds and cold launch succeeds.
+
+#### S1-Q2 Technical check: Firebase + fallback
+- Action:
+  - Test with valid Firebase config in dev.
+  - Test with Firebase unavailable/missing to force fallback.
+- Where to verify:
+  - Logs or debug indicators show Firebase path when available.
+  - Logs or debug indicators show fixture/default fallback when unavailable.
+- Pass criteria:
+  - Both modes render core shell state and avoid crash.
+
+#### S1-Q3 Manual check: shell stability
+- Action:
+  - Fresh app launch.
+  - Navigate Player shell -> Home shell via close action.
+  - Background and foreground the app.
+- Where to verify:
+  - UI remains responsive and navigation state remains valid.
+- Pass criteria:
+  - Navigation is stable and no blocking errors occur.
+
+### 6) Stage 1 Exit Criteria
+- S1-T1 through S1-T4 implemented with evidence.
+- S1-Q1, S1-Q2, S1-Q3 pass with evidence.
+- `S1-G1` moves to `done` only after all above are complete.
+
+### 7) Rework Guardrail (to avoid throwaway/deprecated code)
+- Keep all mock/live integration logic behind service interfaces.
+- Do not reference mock services directly inside screen views.
+- Add release-time guard: Release builds must not use mock entitlement service.
 
 ## Stage 2: Core Viewing Experience
 | ID | Stage | Type | Task | Status | Evidence |
